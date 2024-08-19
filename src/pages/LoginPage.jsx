@@ -53,7 +53,7 @@ const LoginPage = () => {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.API_URL}/${role}/login`,
+        `${import.meta.env.VITE_API_URL}/${role}/login`,
         formData
       );
       const { token, user, recruiter } = response.data;

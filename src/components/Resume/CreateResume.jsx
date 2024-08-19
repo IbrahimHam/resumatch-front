@@ -31,7 +31,7 @@ const CreateResume = () => {
   const autoSave = debounce(async (data) => {
     try {
       await axios.post(
-        `${import.meta.env.API_URL}/user/update-resume-data`,
+        `${import.meta.env.VITE_API_URL}/user/update-resume-data`,
         { resumeData: data },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -47,7 +47,7 @@ const CreateResume = () => {
     const fetchResumeData = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.API_URL}/user/resume-data`,
+          `${import.meta.env.VITE_API_URL}/user/resume-data`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

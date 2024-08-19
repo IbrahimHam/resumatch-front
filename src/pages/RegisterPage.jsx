@@ -62,7 +62,7 @@ const RegisterPage = () => {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.API_URL}${role}/register`,
+        `${import.meta.env.VITE_API_URL}/${role}/register`,
         formData
       );
       const { token, user, recruiter } = response.data;

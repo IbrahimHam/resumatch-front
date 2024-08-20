@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
       setToken(savedToken);
       setUser(JSON.parse(savedUser));
     }
+
     setLoading(false);
   }, [navigate]);
 

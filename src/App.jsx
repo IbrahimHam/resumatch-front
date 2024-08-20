@@ -8,6 +8,7 @@ import SettingsPage from "./pages/SettingsPage";
 import PrivateRoute from "./components/PrivateRoute";
 import ResumePage from "./pages/ResumePage";
 import CreateCompanyPage from "./pages/CreateCompanyPage.jsx";
+import CreateJobPage from "./pages/CreateJobPage.jsx";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
             }
           /> */}
           <Route path="/create-company" element={<CreateCompanyPage />} />
+          <Route path="/create-job" element={<CreateJobPage />} />
 
         </Routes>
       </div>

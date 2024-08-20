@@ -7,6 +7,7 @@ import Footer from "./components/Footer/Footer";
 import SettingsPage from "./pages/SettingsPage";
 import PrivateRoute from "./components/PrivateRoute";
 import ResumePage from "./pages/ResumePage";
+import CreateCompanyPage from "./pages/CreateCompanyPage.jsx";
 
 function App() {
   return (
@@ -33,6 +34,16 @@ function App() {
               </PrivateRoute>
             }
           />
+          {/* <Route
+            path="/create-company"
+            element={
+              <PrivateRoute>
+                <CreateCompanyPage />
+              </PrivateRoute>
+            }
+          /> */}
+          <Route path="/create-company" element={<CreateCompanyPage />} />
+
         </Routes>
       </div>
       <Footer />

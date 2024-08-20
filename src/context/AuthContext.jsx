@@ -15,20 +15,23 @@ export const AuthProvider = ({ children }) => {
     if (savedToken && savedUser) {
       setToken(savedToken);
       setUser(JSON.parse(savedUser));
+    } else {
+
+      navigate("/login");
     }
-  }, []);
+  }, [navigate]);
 
   const isLoggedIn = !!user;
 
-  const login = (newToken, newUser) => {
-    if (!newToken || !newUser) {
-      console.error("Token and user are required to login.");
+  const login = (newToken, newUserOrRecruiter) => {
+    if (!newToken || !newUserOrRecruiter) {
+      console.error("Token and user/recruiter are required to login.");
       return;
     }
 
     localStorage.setItem("token", newToken);
-    localStorage.setItem("user", JSON.stringify(newUser));
-    setUser(newUser);
+    localStorage.setItem("user", JSON.stringify(newUserOrRecruiter));
+    setUser(newUserOrRecruiter);
     setToken(newToken);
     navigate("/");
   };

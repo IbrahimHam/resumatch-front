@@ -1,11 +1,11 @@
 const TemplateOne = ({ data }) => {
   return (
-    <div className="p-6 bg-gray-50 rounded-md shadow-md">
+    <div className="p-0 bg-gray-50 rounded-md shadow-md">
       <div className="bg-gray-800 text-white p-4">
         <h1 className="text-2xl font-bold">{data.name || "Your Name"}</h1>
-        <p>{data.email || "Email"}</p>
-        <p>{data.phone || "Phone"}</p>
-        <p>{data.address || "Address"}</p>
+        <p>{data.contactInfo.email || "Email"}</p>
+        <p>{data.contactInfo.phone || "Phone"}</p>
+        <p>{data.contactInfo.address || "Address"}</p>
         <p>{data.birthDate || "Birth Date"}</p>
         <p>{data.summary || "Summary"}</p>
       </div>
@@ -47,8 +47,7 @@ const TemplateOne = ({ data }) => {
           {data.languages &&
             data.languages.map((language, index) => (
               <li key={index} className="flex justify-between">
-                <span>{language.name || "Language"}</span>
-                <span>{language.level || "Level"}</span>
+                <span>{language}</span>
               </li>
             ))}
         </ul>

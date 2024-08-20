@@ -12,6 +12,7 @@ import {
 const JobListPage = () => {
   const { user, token } = useContext(AuthContext);
   const [jobs, setJobs] = useState([]);
+  const [recruiterJobs, setRecruiterJobs] = useState([]);
   const [tags, setTags] = useState([]);
   const [locations, setLocations] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
@@ -20,9 +21,9 @@ const JobListPage = () => {
   const [selectedLocation, setSelectedLocation] = useState("View all");
   const [selectedTag, setSelectedTag] = useState("View all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [showMyJobs, setShowMyJobs] = useState(false);
   const jobsPerPage = 3;
 
-  // Fetch all jobs
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -34,18 +35,9 @@ const JobListPage = () => {
             },
           }
         );
+
         setJobs(response.data.data.jobs);
         setSelectedJob(response.data.data.jobs[0]);
-
-        const uniqueTags = [
-          ...new Set(response.data.data.jobs.flatMap((job) => job.tags)),
-        ];
-        setTags(uniqueTags);
-
-        const uniqueLocations = [
-          ...new Set(response.data.data.jobs.map((job) => job.location)),
-        ];
-        setLocations(uniqueLocations);
       } catch (err) {
         setError(err.response?.data?.message || "Failed to load jobs.");
       } finally {
@@ -56,6 +48,50 @@ const JobListPage = () => {
     fetchJobs();
   }, [token]);
 
+  useEffect(() => {
+    if (user?.role === "recruiter") {
+      const fetchRecruiterJobs = async () => {
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/job/posted-jobs`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setRecruiterJobs(response.data.data.postedJobs);
+        } catch (err) {
+          setError(
+            err.response?.data?.message || "Failed to load recruiter jobs."
+          );
+        }
+      };
+
+      fetchRecruiterJobs();
+    }
+  }, [token, user?.role]);
+
+  useEffect(() => {
+    if (jobs.length > 0) {
+      const uniqueTags = [...new Set(jobs.flatMap((job) => job.tags))];
+      const uniqueLocations = [...new Set(jobs.map((job) => job.location))];
+
+      setTags(uniqueTags);
+      setLocations(uniqueLocations);
+    }
+  }, [jobs]);
+
+  const filteredJobs = jobs.filter((job) => {
+    const matchesLocation =
+      selectedLocation === "View all" || job.location === selectedLocation;
+    const matchesTag =
+      selectedTag === "View all" || job.tags.includes(selectedTag);
+    const matchesMyJobs = !showMyJobs || recruiterJobs;
+
+    return matchesLocation && matchesTag && matchesMyJobs;
+  });
+
   const handleFilterChange = (type, value) => {
     if (type === "location") {
       setSelectedLocation(value);
@@ -64,14 +100,6 @@ const JobListPage = () => {
     }
     setCurrentPage(1);
   };
-
-  const filteredJobs = jobs.filter((job) => {
-    const matchesLocation =
-      selectedLocation === "View all" || job.location === selectedLocation;
-    const matchesTag =
-      selectedTag === "View all" || job.tags.includes(selectedTag);
-    return matchesLocation && matchesTag;
-  });
 
   const displayedJobs = filteredJobs.slice(
     (currentPage - 1) * jobsPerPage,
@@ -105,9 +133,12 @@ const JobListPage = () => {
               onClick={() => {
                 handleFilterChange("location", "View all");
                 handleFilterChange("tag", "View all");
+                setShowMyJobs(false);
               }}
               className={`${
-                selectedLocation === "View all" && selectedTag === "View all"
+                selectedLocation === "View all" &&
+                selectedTag === "View all" &&
+                !showMyJobs
                   ? "bg-blue-500 text-white"
                   : "bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300"
               } px-4 py-2 rounded-full`}
@@ -121,11 +152,13 @@ const JobListPage = () => {
             >
               <SelectTrigger>Location</SelectTrigger>
               <SelectContent>
-                {locations.map((location, index) => (
-                  <SelectItem key={index} value={location}>
-                    {location}
-                  </SelectItem>
-                ))}
+                {locations
+                  .filter((location) => location) // Ensure no empty strings
+                  .map((location, index) => (
+                    <SelectItem key={index} value={location}>
+                      {location}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
 
@@ -135,13 +168,28 @@ const JobListPage = () => {
             >
               <SelectTrigger>Tags</SelectTrigger>
               <SelectContent>
-                {tags.map((tag, index) => (
-                  <SelectItem key={index} value={tag}>
-                    {tag}
-                  </SelectItem>
-                ))}
+                {tags
+                  .filter((tag) => tag)
+                  .map((tag, index) => (
+                    <SelectItem key={index} value={tag}>
+                      {tag}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
+
+            {user?.role === "recruiter" && (
+              <button
+                onClick={() => setShowMyJobs(!showMyJobs)}
+                className={`${
+                  showMyJobs
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300"
+                } px-4 py-2 rounded-full`}
+              >
+                My Jobs
+              </button>
+            )}
           </div>
 
           <div className="space-y-4">
@@ -224,18 +272,16 @@ const JobListPage = () => {
               </span>
             ))}
           </div>
-
-          {/* Apply or Edit Button */}
-          <div className="mt-6">
-            {user.role === "user" ? (
+          <div className="mt-4">
+            {user?.role === "user" ? (
               <a
                 href={`/apply/${selectedJob._id}`}
                 className="text-blue-500 hover:underline"
               >
                 Apply →
               </a>
-            ) : user.role === "recruiter" &&
-              selectedJob.companyId._id === user.companyId ? (
+            ) : user?.role === "recruiter" &&
+              selectedJob.companyId._id === user?.companyId ? (
               <a
                 href={`/edit-job/${selectedJob._id}`}
                 className="text-blue-500 hover:underline"

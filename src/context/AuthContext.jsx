@@ -16,10 +16,8 @@ export const AuthProvider = ({ children }) => {
     if (savedToken && savedUser) {
       setToken(savedToken);
       setUser(JSON.parse(savedUser));
-      setLoading(false);
-    } else {
-      navigate("/login");
     }
+    setLoading(false);
   }, [navigate]);
 
   const isLoggedIn = !!user;

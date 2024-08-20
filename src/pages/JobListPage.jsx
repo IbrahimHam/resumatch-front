@@ -2,13 +2,18 @@ import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import axios from "axios";
 import ShadcnPagination from "@/components/ui/ShadcnPagination";
-import { Select, SelectTrigger, SelectContent, SelectItem } from "@/components/ui/Select";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/Select";
 
 const JobListPage = () => {
-  const { token } = useContext(AuthContext);
+  const { user, token } = useContext(AuthContext);
   const [jobs, setJobs] = useState([]);
-  const [locations, setLocations] = useState([]);
   const [tags, setTags] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -17,26 +22,30 @@ const JobListPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 3;
 
+  // Fetch all jobs
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/job`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/job`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         setJobs(response.data.data.jobs);
         setSelectedJob(response.data.data.jobs[0]);
-
-        const uniqueLocations = [
-          ...new Set(response.data.data.jobs.map((job) => job.location)),
-        ];
-        setLocations(uniqueLocations);
 
         const uniqueTags = [
           ...new Set(response.data.data.jobs.flatMap((job) => job.tags)),
         ];
         setTags(uniqueTags);
+
+        const uniqueLocations = [
+          ...new Set(response.data.data.jobs.map((job) => job.location)),
+        ];
+        setLocations(uniqueLocations);
       } catch (err) {
         setError(err.response?.data?.message || "Failed to load jobs.");
       } finally {
@@ -47,19 +56,29 @@ const JobListPage = () => {
     fetchJobs();
   }, [token]);
 
+  const handleFilterChange = (type, value) => {
+    if (type === "location") {
+      setSelectedLocation(value);
+    } else if (type === "tag") {
+      setSelectedTag(value);
+    }
+    setCurrentPage(1);
+  };
+
   const filteredJobs = jobs.filter((job) => {
     const matchesLocation =
       selectedLocation === "View all" || job.location === selectedLocation;
-    const matchesTag = selectedTag === "View all" || job.tags.includes(selectedTag);
+    const matchesTag =
+      selectedTag === "View all" || job.tags.includes(selectedTag);
     return matchesLocation && matchesTag;
   });
-
-  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
   const displayedJobs = filteredJobs.slice(
     (currentPage - 1) * jobsPerPage,
     currentPage * jobsPerPage
   );
+
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -71,10 +90,12 @@ const JobListPage = () => {
       <div className="w-1/2 bg-white dark:bg-slate-800 p-8 shadow-lg rounded-lg mr-2 space-y-9 flex flex-col justify-between">
         <div>
           <header className="mb-8">
-            <h1 className="text-4xl font-bold mb-4">Explore Our Job Openings</h1>
+            <h1 className="text-4xl font-bold mb-4">
+              Explore Our Job Openings
+            </h1>
             <p className="text-lg text-gray-600 dark:text-gray-300">
-              Join our mission to innovate and revolutionize the industry. Find a
-              position that fits your skills and passion. Your journey with us
+              Join our mission to innovate and revolutionize the industry. Find
+              a position that fits your skills and passion. Your journey with us
               starts here!
             </p>
           </header>
@@ -82,8 +103,8 @@ const JobListPage = () => {
           <div className="flex justify-center mb-6 space-x-4">
             <button
               onClick={() => {
-                setSelectedLocation("View all");
-                setSelectedTag("View all");
+                handleFilterChange("location", "View all");
+                handleFilterChange("tag", "View all");
               }}
               className={`${
                 selectedLocation === "View all" && selectedTag === "View all"
@@ -94,10 +115,11 @@ const JobListPage = () => {
               View all
             </button>
 
-            <Select value={selectedLocation} onValueChange={setSelectedLocation}>
-              <SelectTrigger>
-                Location
-              </SelectTrigger>
+            <Select
+              value={selectedLocation}
+              onValueChange={(value) => handleFilterChange("location", value)}
+            >
+              <SelectTrigger>Location</SelectTrigger>
               <SelectContent>
                 {locations.map((location, index) => (
                   <SelectItem key={index} value={location}>
@@ -107,10 +129,11 @@ const JobListPage = () => {
               </SelectContent>
             </Select>
 
-            <Select value={selectedTag} onValueChange={setSelectedTag}>
-              <SelectTrigger>
-                Tags
-              </SelectTrigger>
+            <Select
+              value={selectedTag}
+              onValueChange={(value) => handleFilterChange("tag", value)}
+            >
+              <SelectTrigger>Tags</SelectTrigger>
               <SelectContent>
                 {tags.map((tag, index) => (
                   <SelectItem key={index} value={tag}>
@@ -201,13 +224,25 @@ const JobListPage = () => {
               </span>
             ))}
           </div>
+
+          {/* Apply or Edit Button */}
           <div className="mt-6">
-            <a
-              href={`/apply/${selectedJob._id}`}
-              className="text-blue-500 hover:underline"
-            >
-              Apply →
-            </a>
+            {user.role === "user" ? (
+              <a
+                href={`/apply/${selectedJob._id}`}
+                className="text-blue-500 hover:underline"
+              >
+                Apply →
+              </a>
+            ) : user.role === "recruiter" &&
+              selectedJob.companyId._id === user.companyId ? (
+              <a
+                href={`/edit-job/${selectedJob._id}`}
+                className="text-blue-500 hover:underline"
+              >
+                Edit Job →
+              </a>
+            ) : null}
           </div>
         </div>
       )}

@@ -9,6 +9,8 @@ import PrivateRoute from "./components/PrivateRoute";
 import ResumePage from "./pages/ResumePage";
 import CreateCompanyPage from "./pages/CreateCompanyPage.jsx";
 import CreateJobPage from "./pages/CreateJobPage.jsx";
+import JobListPage from "./pages/JobListPage";
+
 
 function App() {
   return (
@@ -45,6 +47,7 @@ function App() {
           /> */}
           <Route path="/create-company" element={<CreateCompanyPage />} />
           <Route path="/create-job" element={<CreateJobPage />} />
+          <Route path="/jobs" element={<JobListPage />} />
 
         </Routes>
       </div>

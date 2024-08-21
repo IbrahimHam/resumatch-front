@@ -8,23 +8,12 @@ import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
 
 const JoinOrCreateCompanyPage = () => {
-  const { token } = useContext(AuthContext);
+  const { user, token, updateUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    image: null,
-    location: "",
-    website: "",
-    employeesNumber: "",
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     if (query) {
@@ -54,71 +43,9 @@ const JoinOrCreateCompanyPage = () => {
     }
   }, [query, token]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setError("");
-  };
-
-  const handleImageChange = (e) => {
-    setFormData((prev) => ({ ...prev, image: e.target.files[0] }));
-  };
-
-  const validateForm = () => {
-    if (
-      !formData.name ||
-      !formData.description ||
-      !formData.location ||
-      !formData.employeesNumber
-    ) {
-      setError("Please fill in all required fields.");
-      return false;
-    }
-    if (!formData.image) {
-      setError("Please upload an image.");
-      return false;
-    }
-    return true;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-
-    setIsLoading(true);
-    const formDataToSend = new FormData();
-    formDataToSend.append("name", formData.name);
-    formDataToSend.append("description", formData.description);
-    formDataToSend.append("image", formData.image);
-    formDataToSend.append("location", formData.location);
-    formDataToSend.append("website", formData.website);
-    formDataToSend.append("employeesNumber", formData.employeesNumber);
-
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/company`,
-        formDataToSend,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      toast.success("Company created successfully!");
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1000);
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to create company.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleJoinCompany = async (companyId) => {
     try {
-      await axios.patch(
+      const response = await axios.patch(
         `${import.meta.env.VITE_API_URL}/company/join-company`,
         { companyId },
         {
@@ -127,6 +54,10 @@ const JoinOrCreateCompanyPage = () => {
           },
         }
       );
+
+      const updatedUser = { ...user, company_id: response.data.data.recruiter.companyId };
+      updateUser(updatedUser);
+
       toast.success("Joined company successfully!");
       setTimeout(() => {
         navigate("/dashboard");
@@ -194,102 +125,12 @@ const JoinOrCreateCompanyPage = () => {
           </div>
         )}
 
-        {!showCreateForm && (
-          <Button
-            onClick={() => navigate("/company/create")}
-            className="bg-green-500 hover:bg-green-600 text-white"
-          >
-            Create New Company
-          </Button>
-        )}
-
-        {showCreateForm && (
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-4 mt-6"
-            encType="multipart/form-data"
-          >
-            <div className="space-y-2">
-              <Label htmlFor="name">Company Name</Label>
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                value={formData.name}
-                onChange={handleInputChange}
-                className="w-full border-2 focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Input
-                id="description"
-                name="description"
-                type="text"
-                value={formData.description}
-                onChange={handleInputChange}
-                className="w-full border-2 focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                name="location"
-                type="text"
-                value={formData.location}
-                onChange={handleInputChange}
-                className="w-full border-2 focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="website">Website</Label>
-              <Input
-                id="website"
-                name="website"
-                type="text"
-                value={formData.website}
-                onChange={handleInputChange}
-                className="w-full border-2 focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="image">Company Image</Label>
-              <Input
-                id="image"
-                name="image"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="w-full border-2 focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="employeesNumber">Number of Employees</Label>
-              <CustomSelect
-                options={["0-50", "50-100", "More than 100"]}
-                value={formData.employeesNumber}
-                onChange={(value) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    employeesNumber: value,
-                  }))
-                }
-                placeholder="Select Employees Number"
-              />
-            </div>
-
-            {error && <div className="text-red-500">{error}</div>}
-
-            <Button
-              type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white"
-              disabled={isLoading}
-            >
-              {isLoading ? "Creating Company..." : "Create Company"}
-            </Button>
-          </form>
-        )}
+        <Button
+          onClick={() => navigate("/company/create")}
+          className="bg-green-500 hover:bg-green-600 text-white"
+        >
+          Create New Company
+        </Button>
       </div>
     </div>
   );

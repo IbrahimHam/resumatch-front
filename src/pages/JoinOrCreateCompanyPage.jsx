@@ -169,7 +169,7 @@ const JoinOrCreateCompanyPage = () => {
             <div className="mt-4">
               <strong>Image:</strong>
               <img
-                src={currentCompany.image}
+                src={`${import.meta.env.VITE_BASE_URL}${currentCompany.image}`}
                 alt="Company Logo"
                 className="mt-2 max-h-32"
               />

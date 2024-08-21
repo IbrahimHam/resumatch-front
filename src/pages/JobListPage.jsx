@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/Select";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useNavigate } from "react-router-dom";
+import ConfirmationDialog from "@/components/ui/ConfirmationDialog";
 
 const JobListPage = () => {
   const { user, token } = useContext(AuthContext);
@@ -24,6 +25,8 @@ const JobListPage = () => {
   const [selectedTag, setSelectedTag] = useState("View all");
   const [currentPage, setCurrentPage] = useState(1);
   const [showMyJobs, setShowMyJobs] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [jobData, setJobData] = useState({}); // Separate state for job data
   const jobsPerPage = 3;
   const navigate = useNavigate();
 
@@ -76,7 +79,7 @@ const JobListPage = () => {
   }, [token, user?.role]);
 
   useEffect(() => {
-    if (jobs.length > 0) {
+    if (jobs?.length > 0) {
       const uniqueTags = [...new Set(jobs.flatMap((job) => job.tags))];
       const uniqueLocations = [...new Set(jobs.map((job) => job.location))];
 
@@ -85,7 +88,7 @@ const JobListPage = () => {
     }
   }, [jobs]);
 
-  const filteredJobs = jobs.filter((job) => {
+  const filteredJobs = jobs?.filter((job) => {
     const matchesLocation =
       selectedLocation === "View all" || job.location === selectedLocation;
     const matchesTag =
@@ -104,12 +107,12 @@ const JobListPage = () => {
     setCurrentPage(1);
   };
 
-  const displayedJobs = filteredJobs.slice(
+  const displayedJobs = filteredJobs?.slice(
     (currentPage - 1) * jobsPerPage,
     currentPage * jobsPerPage
   );
 
-  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+  const totalPages = Math.ceil(filteredJobs?.length / jobsPerPage);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -123,9 +126,84 @@ const JobListPage = () => {
     }
   };
 
-  const handleEdit = (jobId) => {};
+  const handleEdit = (jobId) => {
+    const jobToEdit = jobs.find((job) => job._id === jobId);
+    setJobData(jobToEdit);
+    setIsDialogOpen(true);
+  };
 
-  const handleDelete = (jobId) => {};
+  const handleSaveEdit = async () => {
+    try {
+      let updatedTags = jobData.tags;
+      if (typeof updatedTags === "string") {
+        updatedTags = updatedTags.split(",").map((tag) => tag.trim());
+      }
+      const updatedJobData = { ...jobData, tags: updatedTags };
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/job/${updatedJobData._id}`,
+        updatedJobData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setJobs((prevJobs) =>
+        prevJobs.map((job) =>
+          job._id === updatedJobData._id ? { ...job, ...updatedJobData } : job
+        )
+      );
+
+      setSelectedJob({ ...selectedJob, ...updatedJobData });
+      setJobData({});
+      setIsDialogOpen(false);
+    } catch (err) {
+      setError("Failed to update the job.");
+    }
+  };
+
+  const handleDelete = async (jobId) => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/job/${jobId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setJobs((prevJobs) => {
+        const updatedJobs = prevJobs.filter((job) => job._id !== jobId);
+
+        const updatedFilteredJobs = updatedJobs.filter((job) => {
+          const matchesLocation =
+            selectedLocation === "View all" || job.location === selectedLocation;
+          const matchesTag =
+            selectedTag === "View all" || job.tags.includes(selectedTag);
+          const matchesMyJobs =
+            !showMyJobs ||
+            recruiterJobs.some((recruiterJob) => recruiterJob._id === job._id);
+
+          return matchesLocation && matchesTag && matchesMyJobs;
+        });
+
+        if (updatedFilteredJobs.length > 0) {
+          setSelectedJob(updatedFilteredJobs[0]);
+        } else {
+          setSelectedJob(null);
+        }
+
+        return updatedJobs;
+      });
+
+      setIsDialogOpen(false);
+    } catch (err) {
+      setError("Failed to delete the job.");
+    }
+  };
+
+  const confirmDelete = () => {
+    setIsDialogOpen(true);
+  };
 
   return (
     <div className="flex min-h-screen bg-slate-100 dark:bg-slate-900 pt-20 px-4">
@@ -233,7 +311,7 @@ const JobListPage = () => {
           <div className="space-y-4">
             {loading && <p>Loading jobs...</p>}
             {error && <p className="text-red-500">{error}</p>}
-            {displayedJobs.length > 0 ? (
+            {displayedJobs?.length > 0 ? (
               displayedJobs.map((job) => (
                 <div
                   key={job._id}
@@ -252,7 +330,7 @@ const JobListPage = () => {
                       <span className="bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full">
                         {job.jobType}
                       </span>
-                      {job.tags.map((tag, index) => (
+                      {job?.tags?.map((tag, index) => (
                         <span
                           key={index}
                           className="bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full"
@@ -271,7 +349,7 @@ const JobListPage = () => {
         </div>
 
         {/* Pagination */}
-        {filteredJobs.length > jobsPerPage && (
+        {filteredJobs?.length > jobsPerPage && (
           <div className="mt-auto">
             <ShadcnPagination
               currentPage={currentPage}
@@ -285,23 +363,23 @@ const JobListPage = () => {
       {/* Right Side */}
       {selectedJob && (
         <div className="flex-1 p-8 bg-white dark:bg-slate-800 rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold mb-6">{selectedJob.title}</h2>
+          <h2 className="text-2xl font-bold mb-6">{selectedJob?.title}</h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">
-            {selectedJob.description}
+            {selectedJob?.description}
           </p>
           <h3 className="text-xl font-semibold mb-2">Location:</h3>
-          <p className="mb-4">{selectedJob.location}</p>
+          <p className="mb-4">{selectedJob?.location}</p>
           <h3 className="text-xl font-semibold mb-2">Job Type:</h3>
-          <p className="mb-4">{selectedJob.jobType}</p>
+          <p className="mb-4">{selectedJob?.jobType}</p>
           <h3 className="text-xl font-semibold mb-2">Company:</h3>
-          <p className="mb-4">{selectedJob.companyId.name}</p>
+          <p className="mb-4">{selectedJob?.companyId?.name}</p>
           <h3 className="text-xl font-semibold mb-2">Detailed Requirements:</h3>
           <p className="mb-4 whitespace-pre-line">
-            {selectedJob.detailedRequirements}
+            {selectedJob?.detailedRequirements}
           </p>
           <h3 className="text-xl font-semibold mb-2">Tags:</h3>
           <div className="flex space-x-4">
-            {selectedJob.tags.map((tag, index) => (
+            {selectedJob?.tags?.map((tag, index) => (
               <span
                 key={index}
                 className="bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full"
@@ -312,25 +390,29 @@ const JobListPage = () => {
           </div>
           <div className="mt-4">
             {user?.role === "user" ? (
-              <a
-                href={`/apply/${selectedJob._id}`}
-                className="text-blue-500 hover:underline"
-              >
-                Apply →
-              </a>
+              <div className="justify-end">
+                <button
+                  onClick={() => handleApply(selectedJob?._id)}
+                  className={
+                    "px-4 py-2 rounded-full bg-blue-500 text-white transition-colors duration-200 ease-in-out hover:bg-blue-600"
+                  }
+                >
+                  Apply
+                </button>
+              </div>
             ) : user?.role === "recruiter" &&
-              selectedJob.companyId._id === user?.company_id ? (
+              selectedJob?.companyId._id === user?.company_id ? (
               <div className="flex space-x-2 justify-end">
                 <button
-                  onClick={() => handleEdit(selectedJob._id)}
+                  onClick={() => handleEdit(selectedJob?._id)}
                   className={"px-4 py-2 rounded-full bg-blue-500 text-white transition-colors duration-200 ease-in-out hover:bg-blue-600"}
                 >
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(selectedJob._id)}
+                  onClick={() => confirmDelete()}
                   className={"px-4 py-2 rounded-full bg-red-500 text-white transition-colors duration-200 ease-in-out hover:bg-red-600"}
-                  >
+                >
                   Delete
                 </button>
               </div>
@@ -338,6 +420,24 @@ const JobListPage = () => {
           </div>
         </div>
       )}
+      <ConfirmationDialog
+        isOpen={isDialogOpen}
+        title={jobData.title ? "Edit Job" : "Delete Job"}
+        description={
+          jobData.title
+            ? "Update the job details below:"
+            : "Are you sure you want to delete this job?"
+        }
+        onConfirm={
+          jobData.title ? handleSaveEdit : () => handleDelete(selectedJob?._id)
+        }
+        onCancel={() => {
+          setIsDialogOpen(false);
+          setJobData({});
+        }}
+        jobData={jobData}
+        setJobData={setJobData}
+      />
     </div>
   );
 };

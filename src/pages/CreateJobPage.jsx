@@ -27,16 +27,16 @@ const CreateJobPage = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
+  
     const fetchCompanyInfo = async () => {
-      // TODO: Check if the user has a companyId
-      // if (!user?.companyId) {
-      //   navigate("/connect-company"); // Redirect to a page where the recruiter can connect to or create a company
-      //   return;
-      // }
+      if (!user.company_id) {
+        navigate("/company/connect");
+        return;
+      }
 
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/company/${user.companyId}`,
+          `${import.meta.env.VITE_API_URL}/company/${user.company_id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -48,12 +48,12 @@ const CreateJobPage = () => {
         console.error("Error fetching company information:", err);
       }
     };
-
-    // TODO: ADD companyId for recruiter when loggin in
-    if (user?.companyId) {
+  
+    if (user.company_id) {
       fetchCompanyInfo();
     }
-  }, [user, token]);
+  }, [user, token, navigate]);
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -108,7 +108,7 @@ const CreateJobPage = () => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post(
+      await axios.post(
         `${import.meta.env.VITE_API_URL}/job`,
         formData,
         {

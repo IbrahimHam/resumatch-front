@@ -27,7 +27,7 @@ const CreateJobPage = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-  
+    
     const fetchCompanyInfo = async () => {
       if (!user.company_id) {
         navigate("/company/connect");
@@ -48,12 +48,12 @@ const CreateJobPage = () => {
         console.error("Error fetching company information:", err);
       }
     };
-  
+
     if (user.company_id) {
       fetchCompanyInfo();
     }
   }, [user, token, navigate]);
-  
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -108,18 +108,19 @@ const CreateJobPage = () => {
 
     setIsLoading(true);
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/job`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const jobData = {
+        ...formData,
+        tags: formData.tags.split(",").map((tag) => tag.trim()),
+      };
+
+      await axios.post(`${import.meta.env.VITE_API_URL}/job`, jobData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       toast.success("Job posted successfully!");
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/jobs");
       }, 1000);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to post job.");

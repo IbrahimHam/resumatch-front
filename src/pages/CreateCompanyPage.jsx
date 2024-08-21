@@ -80,7 +80,7 @@ const CreateCompanyPage = () => {
 
       toast.success("Company created successfully!");
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/jobs");
       }, 1000);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to create company.");

@@ -8,6 +8,8 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/Select";
+import { Tooltip } from "@/components/ui/tooltip";
+import { useNavigate } from "react-router-dom";
 
 const JobListPage = () => {
   const { user, token } = useContext(AuthContext);
@@ -23,6 +25,7 @@ const JobListPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showMyJobs, setShowMyJobs] = useState(false);
   const jobsPerPage = 3;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -87,7 +90,7 @@ const JobListPage = () => {
       selectedLocation === "View all" || job.location === selectedLocation;
     const matchesTag =
       selectedTag === "View all" || job.tags.includes(selectedTag);
-    const matchesMyJobs = !showMyJobs || recruiterJobs;
+    const matchesMyJobs = !showMyJobs || recruiterJobs.some((recruiterJob) => recruiterJob._id === job._id);
 
     return matchesLocation && matchesTag && matchesMyJobs;
   });
@@ -111,6 +114,18 @@ const JobListPage = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+
+  const handleCreateJobClick = () => {
+    if (!user?.company_id) {
+      navigate("/company/connect");
+    } else {
+      navigate("/create-job");
+    }
+  };
+
+  const handleEdit = (jobId) => {};
+
+  const handleDelete = (jobId) => {};
 
   return (
     <div className="flex min-h-screen bg-slate-100 dark:bg-slate-900 pt-20 px-4">
@@ -153,7 +168,7 @@ const JobListPage = () => {
               <SelectTrigger>Location</SelectTrigger>
               <SelectContent>
                 {locations
-                  .filter((location) => location) // Ensure no empty strings
+                  .filter((location) => location)
                   .map((location, index) => (
                     <SelectItem key={index} value={location}>
                       {location}
@@ -189,6 +204,29 @@ const JobListPage = () => {
               >
                 My Jobs
               </button>
+            )}
+
+            {user?.role === "recruiter" && (
+              <>
+                {!user?.company_id ? (
+                  <Tooltip content="Please connect to a company before posting jobs">
+                    <button
+                      onClick={handleCreateJobClick}
+                      disabled={!user?.company_id}
+                      className="px-4 py-2 rounded-full bg-gray-200 text-gray-400 cursor-not-allowed"
+                    >
+                      Create Job
+                    </button>
+                  </Tooltip>
+                ) : (
+                  <button
+                    onClick={handleCreateJobClick}
+                    className="px-4 py-2 rounded-full bg-blue-500 text-white"
+                  >
+                    Create Job
+                  </button>
+                )}
+              </>
             )}
           </div>
 
@@ -281,13 +319,21 @@ const JobListPage = () => {
                 Apply →
               </a>
             ) : user?.role === "recruiter" &&
-              selectedJob.companyId._id === user?.companyId ? (
-              <a
-                href={`/edit-job/${selectedJob._id}`}
-                className="text-blue-500 hover:underline"
-              >
-                Edit Job →
-              </a>
+              selectedJob.companyId._id === user?.company_id ? (
+              <div className="flex space-x-2 justify-end">
+                <button
+                  onClick={() => handleEdit(selectedJob._id)}
+                  className={"px-4 py-2 rounded-full bg-blue-500 text-white transition-colors duration-200 ease-in-out hover:bg-blue-600"}
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(selectedJob._id)}
+                  className={"px-4 py-2 rounded-full bg-red-500 text-white transition-colors duration-200 ease-in-out hover:bg-red-600"}
+                  >
+                  Delete
+                </button>
+              </div>
             ) : null}
           </div>
         </div>

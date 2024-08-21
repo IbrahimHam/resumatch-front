@@ -6,6 +6,7 @@ import CreateCompanyPage from "@/pages/CreateCompanyPage";
 import ResumePage from "@/pages/ResumePage";
 import SettingsPage from "@/pages/SettingsPage";
 import { NotFoundPage, UnauthorizedPage } from "../components/ErrorPages";
+import JobListPage from "../pages/JobListPage";
 
 export const routes = [
   {
@@ -56,5 +57,11 @@ export const routes = [
     path: "/unauthorized",
     element: <UnauthorizedPage />,
     private: false,
+  },
+  {
+    path: "/jobs",
+    element: <JobListPage />,
+    private: false,
+    allowedRoles: ["user", "recruiter"],
   },
 ];

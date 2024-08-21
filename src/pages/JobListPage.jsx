@@ -205,6 +205,8 @@ const JobListPage = () => {
     setIsDialogOpen(true);
   };
 
+  const handleApply = async (jobId) => {};
+
   return (
     <div className="flex min-h-screen bg-slate-100 dark:bg-slate-900 pt-20 px-4">
       {/* Left Side */}

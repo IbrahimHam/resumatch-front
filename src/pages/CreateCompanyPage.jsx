@@ -9,11 +9,8 @@ import { toast, Toaster } from "react-hot-toast";
 import CustomSelect from "@/components/ui/CustomSelect";
 
 const CreateCompanyPage = () => {
-  const { user, isLoggedIn } = React.useContext(AuthContext);
-  console.log("isLoggedIn:", isLoggedIn);
-  console.log("user:", user);
+  const { user, token, updateUser } = React.useContext(AuthContext);
 
-  const { token } = useContext(AuthContext);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -77,6 +74,10 @@ const CreateCompanyPage = () => {
           },
         }
       );
+
+      const updatedUser = { ...user, company_id: response.data.data._id };
+      updateUser(updatedUser);
+
       toast.success("Company created successfully!");
       setTimeout(() => {
         navigate("/dashboard");

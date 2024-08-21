@@ -14,6 +14,29 @@ const JoinOrCreateCompanyPage = () => {
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
+  const [currentCompany, setCurrentCompany] = useState(null);
+
+  useEffect(() => {
+    if (user?.company_id) {
+      const fetchCurrentCompany = async () => {
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/company/${user.company_id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setCurrentCompany(response.data.data.company);
+        } catch (err) {
+          toast.error("Failed to load current company details.");
+        }
+      };
+
+      fetchCurrentCompany();
+    }
+  }, [user?.company_id, token]);
 
   useEffect(() => {
     if (query) {
@@ -70,7 +93,8 @@ const JoinOrCreateCompanyPage = () => {
   return (
     <div className="flex min-h-screen bg-slate-100 dark:bg-slate-900 pt-20">
       <Toaster position="top-center" />
-      <div className="w-full max-w-4xl mx-auto p-8 bg-white dark:bg-slate-800 rounded-lg shadow-lg">
+      {/* Left side */}
+      <div className="flex-1 p-8 bg-white dark:bg-slate-800 rounded-lg shadow-lg mr-4">
         <h2 className="text-2xl font-bold mb-6">Join or Create a Company</h2>
 
         <div className="mb-6 space-y-2">
@@ -132,6 +156,27 @@ const JoinOrCreateCompanyPage = () => {
           Create New Company
         </Button>
       </div>
+
+      {/* Right side */}
+      {currentCompany && (
+        <div className="w-1/3 p-8 bg-white dark:bg-slate-800 rounded-lg shadow-lg">
+          <h3 className="text-xl font-semibold mb-4">Your Current Company:</h3>
+          <p><strong>Name:</strong> {currentCompany.name}</p>
+          <p><strong>Description:</strong> {currentCompany.description}</p>
+          <p><strong>Location:</strong> {currentCompany.location}</p>
+          <p><strong>Website:</strong> <a href={currentCompany.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{currentCompany.website}</a></p>
+          {currentCompany.image && (
+            <div className="mt-4">
+              <strong>Image:</strong>
+              <img
+                src={currentCompany.image}
+                alt="Company Logo"
+                className="mt-2 max-h-32"
+              />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

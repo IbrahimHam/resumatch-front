@@ -2,6 +2,8 @@ import React, { useContext, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -43,23 +45,28 @@ const UserDropdown = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         onClose={handleDropdownClose}
-        className="bg-white shadow-xl dark:bg-slate-900"
+        className="bg-white shadow-xl dark:bg-slate-900 p-2"
       >
+        <DropdownMenuLabel>
+          {user?.fullName}
+          <span className="block text-gray-400 text-xs">{user?.email}</span>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
         <Link to="/profile">
-          <DropdownMenuItem className="hover:bg-blue-600 transition-colors text-xs hover:text-white cursor-pointer rounded-md px-10">
+          <DropdownMenuItem className="hover:bg-blue-600 transition-colors text-xs hover:text-white cursor-pointer rounded-md px-2">
             <User className="mr-2 size-5" />
             Profile
           </DropdownMenuItem>
         </Link>
         <Link to="/settings">
-          <DropdownMenuItem className="hover:bg-blue-600 transition-colors text-xs hover:text-white cursor-pointer rounded-md px-10">
+          <DropdownMenuItem className="hover:bg-blue-600 transition-colors text-xs hover:text-white cursor-pointer rounded-md px-2">
             <Settings className="mr-2 size-5" />
             Settings
           </DropdownMenuItem>
         </Link>
         <DropdownMenuItem
           onClick={logout}
-          className="hover:bg-red-600 transition-colors text-xs text-red-500 hover:text-white cursor-pointer rounded-md px-10"
+          className="hover:bg-red-600 transition-colors text-xs text-red-500 hover:text-white cursor-pointer rounded-md px-2"
         >
           <LogOut className="mr-2 size-5" />
           Log Out

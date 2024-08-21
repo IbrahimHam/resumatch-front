@@ -8,6 +8,7 @@ import SettingsPage from "@/pages/SettingsPage";
 import { NotFoundPage, UnauthorizedPage } from "../components/ErrorPages";
 import JobListPage from "../pages/JobListPage";
 import JoinOrCreateCompanyPage from "../pages/JoinOrCreateCompanyPage";
+import ResumeLibraryPage from "../pages/ResumeLibraryPage";
 
 export const routes = [
   {
@@ -26,7 +27,7 @@ export const routes = [
     private: false,
   },
   {
-    path: "/create-resume/:id",
+    path: "/create-resume/:id/:resumeId?",
     element: <ResumePage />,
     private: true,
     allowedRoles: ["user"],
@@ -70,5 +71,11 @@ export const routes = [
     element: <JoinOrCreateCompanyPage />,
     private: false,
     allowedRoles: ["user", "recruiter"],
+  },
+  {
+    path: "/resume",
+    element: <ResumeLibraryPage />,
+    private: true,
+    allowedRoles: ["user"],
   },
 ];

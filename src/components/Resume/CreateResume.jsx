@@ -11,6 +11,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import Modal from "./templates/Modal";
 import { Expand } from "lucide-react";
+import { set } from "react-hook-form";
 
 const CreateResume = () => {
   const { token, user } = React.useContext(AuthContext);
@@ -29,10 +30,11 @@ const CreateResume = () => {
     skills: [],
   });
 
-  const { id } = useParams();
+  const { id, resumeId } = useParams();
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [existingResume, setExistingResume] = useState(false);
+  const [templateId, setTemplateId] = useState(null);
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -59,6 +61,10 @@ const CreateResume = () => {
 
   useEffect(() => {
     const fetchResumeData = async () => {
+      if (resumeId) {
+        setTemplateId(resumeId);
+      }
+
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/user/resume-data`,
@@ -132,17 +138,24 @@ const CreateResume = () => {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-6 p-6">
-        <div className="col-span-1">
+      <div className="flex flex-col md:flex-row min-h-screen">
+        <div className="md:w-2/4 overflow-y-auto p-4">
+          {resumeId}
           <ResumeForm
             onUpdate={handleFormUpdate}
             initialData={resumeData}
             token={token}
             existingResume={existingResume}
             setExistingResume={setExistingResume}
+            templateId={templateId}
+            setTemplateId={setTemplateId}
+            templateLink={id}
           />
         </div>
-        <div className="col-span-1" id="resume">
+        <div
+          className="col-span-1 md:w-2/4 p-4 md:sticky md:top-0 md:h-screen overflow-y-auto bg-gray-100"
+          id="resume"
+        >
           <div className="flex justify-between mb-4">
             <button
               onClick={toggleModal}

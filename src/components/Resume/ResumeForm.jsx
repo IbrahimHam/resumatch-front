@@ -11,6 +11,9 @@ const ResumeForm = ({
   token,
   existingResume,
   setExistingResume,
+  templateId,
+  setTemplateId,
+  templateLink,
 }) => {
   const [formData, setFormData] = useState({
     name: "",
@@ -65,6 +68,29 @@ const ResumeForm = ({
     if (currentTime - lastSaveTimeRef.current < 30000) {
       toast.error("You should wait to save again.");
       return;
+    }
+
+    if (templateId != null) {
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/user/update-template/${templateId}`,
+        {
+          templateLink: templateLink,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+    } else {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/user/create-template`,
+        {
+          templateLink: templateLink,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setTemplateId(response.data);
     }
 
     setIsSaving(true);
@@ -276,7 +302,7 @@ const ResumeForm = ({
               setFormData(updatedData);
               onUpdate(updatedData);
             }}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded dark:bg-transparent"
           />
         </div>
 
@@ -522,7 +548,7 @@ const ResumeForm = ({
                   onUpdate({ ...formData, experience: updatedExperience });
                 }}
                 placeholder="Description"
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded dark:bg-transparent"
               />
               <Button
                 onClick={() => {

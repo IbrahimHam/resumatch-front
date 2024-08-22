@@ -9,6 +9,8 @@ import { NotFoundPage, UnauthorizedPage } from "../components/ErrorPages";
 import JobListPage from "../pages/JobListPage";
 import JoinOrCreateCompanyPage from "../pages/JoinOrCreateCompanyPage";
 import ResumeLibraryPage from "../pages/ResumeLibraryPage";
+import CompanyPage from "../pages/CompanyPage";
+import CompaniesPage from "../pages/CompaniesPage";
 
 export const routes = [
   {
@@ -69,13 +71,25 @@ export const routes = [
   {
     path: "/company/connect",
     element: <JoinOrCreateCompanyPage />,
-    private: false,
-    allowedRoles: ["user", "recruiter"],
+    private: true,
+    allowedRoles: ["recruiter"],
+  },
+  {
+    path: "/company/",
+    element: <CompanyPage />,
+    private: true,
+    allowedRoles: ["recruiter"],
   },
   {
     path: "/resume",
     element: <ResumeLibraryPage />,
     private: true,
     allowedRoles: ["user"],
+  },
+  {
+    path: "/companies",
+    element: <CompaniesPage />,
+    private: true,
+    allowedRoles: ["user", "recruiter"],
   },
 ];

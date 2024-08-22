@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { PlusIcon, Merge, Users, MapPin, Globe } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "@/context/AuthContext";

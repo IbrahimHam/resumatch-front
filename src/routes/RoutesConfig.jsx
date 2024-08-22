@@ -90,6 +90,6 @@ export const routes = [
     path: "/companies",
     element: <CompaniesPage />,
     private: true,
-    allowedRoles: ["user", "recruiter"],
+    allowedRoles: ["user"],
   },
 ];

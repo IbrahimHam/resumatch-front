@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import ResumeForm from "./ResumeForm";
 import TemplateOne from "./templates/TemplateOne";
@@ -11,7 +11,6 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import Modal from "./templates/Modal";
 import { Expand } from "lucide-react";
-import { set } from "react-hook-form";
 
 const CreateResume = () => {
   const { token, user } = React.useContext(AuthContext);
@@ -35,6 +34,7 @@ const CreateResume = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [existingResume, setExistingResume] = useState(false);
   const [templateId, setTemplateId] = useState(null);
+  const templateRef = useRef(null);
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -132,6 +132,47 @@ const CreateResume = () => {
     }
   };
 
+  const saveTemplate = async () => {
+    try {
+      const templateElement = templateRef.current;
+      if (templateElement) {
+        const templateHTML = templateElement.innerHTML;
+
+        const fullHTML = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Resume Template</title>
+          <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+        </head>
+        <body>
+          <div class="container mx-auto p-4">
+            ${templateHTML}
+          </div>
+        </body>
+        </html>
+      `;
+
+        await axios.post(
+          `${import.meta.env.VITE_API_URL}/user/save-template`,
+          { htmlContent: fullHTML },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        console.log("Template saved successfully.");
+      }
+    } catch (error) {
+      console.error("Failed to save the template:", error);
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -150,11 +191,13 @@ const CreateResume = () => {
             templateId={templateId}
             setTemplateId={setTemplateId}
             templateLink={id}
+            saveTemplate={saveTemplate}
           />
         </div>
         <div
           className="col-span-1 md:w-2/4 p-4 md:sticky md:top-0 md:h-screen overflow-y-auto bg-gray-100"
           id="resume"
+          ref={templateRef}
         >
           <div className="flex justify-between mb-4">
             <button

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import axios from "axios";
 import ShadcnPagination from "@/components/ui/ShadcnPagination";
@@ -205,10 +205,12 @@ const JobListPage = () => {
     setIsDialogOpen(true);
   };
 
-  const handleApply = async (jobId) => {};
+  const handleApply = async (jobId) => {
+    navigate(`/apply/${jobId}`);
+  };
 
   return (
-    <div className="flex min-h-screen bg-slate-100 dark:bg-slate-900 pt-20 px-4">
+    <div className="flex min-h-screen bg-slate-100 dark:bg-slate-900 pt-5 px-4">
       {/* Left Side */}
       <div className="w-1/2 bg-white dark:bg-slate-800 p-8 shadow-lg rounded-lg mr-2 space-y-9 flex flex-col justify-between">
         <div>

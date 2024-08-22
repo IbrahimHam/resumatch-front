@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
 import { Toaster, toast } from "react-hot-toast";
-import { set } from "react-hook-form";
 
 const ResumeForm = ({
   onUpdate,
@@ -14,6 +13,7 @@ const ResumeForm = ({
   templateId,
   setTemplateId,
   templateLink,
+  saveTemplate,
 }) => {
   const [formData, setFormData] = useState({
     name: "",
@@ -99,7 +99,7 @@ const ResumeForm = ({
         const response = await axios.put(
           `${import.meta.env.VITE_API_URL}/user/update-resume-data`,
           {
-            data: formData,
+             data: formData,
           },
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -125,12 +125,18 @@ const ResumeForm = ({
           setExistingResume(true);
         }
       }
+
+      // Save the resume template HTML after saving the resume data
+      if (saveTemplate) {
+        await saveTemplate();
+      }
     } catch (error) {
       console.error("Error saving resume data:", error);
+      toast.error("Failed to save resume data.");
     } finally {
       setIsSaving(false);
     }
-  }, [formData, token]);
+  }, [formData, token, existingResume, saveTemplate]);
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];

@@ -11,6 +11,7 @@ import JoinOrCreateCompanyPage from "../pages/JoinOrCreateCompanyPage";
 import ResumeLibraryPage from "../pages/ResumeLibraryPage";
 import CompanyPage from "../pages/CompanyPage";
 import CompaniesPage from "../pages/CompaniesPage";
+import ApplyPage from "../pages/ApplyPage";
 
 export const routes = [
   {
@@ -89,6 +90,12 @@ export const routes = [
   {
     path: "/companies",
     element: <CompaniesPage />,
+    private: true,
+    allowedRoles: ["user"],
+  },
+  {
+    path: "/apply/:jobId",
+    element: <ApplyPage />,
     private: true,
     allowedRoles: ["user"],
   },

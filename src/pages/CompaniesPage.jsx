@@ -9,7 +9,7 @@ import axios from "axios";
 import Loading from "@/components/Loading";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import { PlusIcon, Merge, Filter, Users, MapPin, Globe } from "lucide-react";
+import { Filter, Users, MapPin, Globe } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const CompaniesPage = () => {

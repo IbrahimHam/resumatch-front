@@ -8,7 +8,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/Select";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "@/components/ui/ConfirmationDialog";
 import Loading from "@/components/Loading";

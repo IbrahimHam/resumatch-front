@@ -98,7 +98,7 @@ const CompaniesPage = () => {
 
   return (
     <>
-      <div className="flex flex-col min-h-screen bg-slate-100 dark:bg-slate-900 pt-16 lg:flex-row">
+      <div className="flex flex-col min-h-screen bg-slate-100 dark:bg-slate-900 pt-5 lg:flex-row">
         {/* Left side */}
         <div className="flex-1 lg:w-3/5 md:w-3/5 sm:w-full p-8 bg-white dark:bg-slate-800 rounded-lg shadow-lg mr-4 max-sm:w-full mb-16">
           <h2 className="text-2xl font-bold mb-6">Explore Companies</h2>

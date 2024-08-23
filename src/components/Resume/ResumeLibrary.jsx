@@ -156,9 +156,9 @@ export default function ResumeLibrary() {
                               <Card className="flex flex-col group cursor-pointer overflow-hidden border-gray-500/50 ">
                                 <CardHeader className="relative p-0 space-y-0">
                                   <img
-                                    src={template.image}
+                                    src={`/templates/${template.id}.png`}
                                     alt={template.title}
-                                    className="w-full h-40 object-cover"
+                                    className="w-full h-52 object-cover object-top"
                                   />
                                   <div className="absolute inset-0 bg-black bg-opacity-85 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                     <span className="text-white text-sm font-medium">
@@ -194,9 +194,9 @@ export default function ResumeLibrary() {
               >
                 <CardHeader className="py-2 px-2">
                   <img
-                    src={resume.image}
+                    src={`/templates/${resume.templateLink}.png`}
                     alt={resume.title}
-                    className="w-full h-32 object-cover rounded-lg"
+                    className="w-full h-32 object-cover object-top rounded-lg"
                   />
                 </CardHeader>
                 <CardContent className="flex-grow p-2">

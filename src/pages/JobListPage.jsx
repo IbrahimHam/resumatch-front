@@ -11,6 +11,7 @@ import {
 import { Tooltip } from "@/components/ui/tooltip";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "@/components/ui/ConfirmationDialog";
+import Loading from "@/components/Loading";
 
 const JobListPage = () => {
   const { user, token } = useContext(AuthContext);
@@ -93,7 +94,9 @@ const JobListPage = () => {
       selectedLocation === "View all" || job.location === selectedLocation;
     const matchesTag =
       selectedTag === "View all" || job.tags.includes(selectedTag);
-    const matchesMyJobs = !showMyJobs || recruiterJobs.some((recruiterJob) => recruiterJob._id === job._id);
+    const matchesMyJobs =
+      !showMyJobs ||
+      recruiterJobs.some((recruiterJob) => recruiterJob._id === job._id);
 
     return matchesLocation && matchesTag && matchesMyJobs;
   });
@@ -176,7 +179,8 @@ const JobListPage = () => {
 
         const updatedFilteredJobs = updatedJobs.filter((job) => {
           const matchesLocation =
-            selectedLocation === "View all" || job.location === selectedLocation;
+            selectedLocation === "View all" ||
+            job.location === selectedLocation;
           const matchesTag =
             selectedTag === "View all" || job.tags.includes(selectedTag);
           const matchesMyJobs =
@@ -313,7 +317,7 @@ const JobListPage = () => {
           </div>
 
           <div className="space-y-4">
-            {loading && <p>Loading jobs...</p>}
+            {loading && <Loading />}
             {error && <p className="text-red-500">{error}</p>}
             {displayedJobs?.length > 0 ? (
               displayedJobs.map((job) => (
@@ -409,13 +413,17 @@ const JobListPage = () => {
               <div className="flex space-x-2 justify-end">
                 <button
                   onClick={() => handleEdit(selectedJob?._id)}
-                  className={"px-4 py-2 rounded-full bg-blue-500 text-white transition-colors duration-200 ease-in-out hover:bg-blue-600"}
+                  className={
+                    "px-4 py-2 rounded-full bg-blue-500 text-white transition-colors duration-200 ease-in-out hover:bg-blue-600"
+                  }
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => confirmDelete()}
-                  className={"px-4 py-2 rounded-full bg-red-500 text-white transition-colors duration-200 ease-in-out hover:bg-red-600"}
+                  className={
+                    "px-4 py-2 rounded-full bg-red-500 text-white transition-colors duration-200 ease-in-out hover:bg-red-600"
+                  }
                 >
                   Delete
                 </button>

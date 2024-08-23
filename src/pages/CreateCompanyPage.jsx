@@ -185,7 +185,7 @@ const CreateCompanyPage = () => {
             <Input
               id="companyEmail"
               name="companyEmail"
-              type="email" // Specify email type
+              type="email"
               value={formData.companyEmail}
               onChange={handleInputChange}
               className="w-full border-2 focus:ring-2 focus:ring-blue-500"

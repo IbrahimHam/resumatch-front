@@ -62,9 +62,34 @@ const JoinOrCreateCompanyPage = () => {
 
       fetchCompanies();
     } else {
-      setCompanies([]);
+      fetchAllCompanies();
     }
   }, [query, token]);
+
+  const fetchAllCompanies = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/company`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setCompanies(response.data.data.companies);
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to load companies.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllCompanies();
+  }, []);
+
 
   const handleJoinCompany = async (companyId) => {
     try {
@@ -78,7 +103,10 @@ const JoinOrCreateCompanyPage = () => {
         }
       );
 
-      const updatedUser = { ...user, company_id: response.data.data.recruiter.companyId };
+      const updatedUser = {
+        ...user,
+        company_id: response.data.data.recruiter.companyId,
+      };
       updateUser(updatedUser);
 
       toast.success("Joined company successfully!");
@@ -161,10 +189,26 @@ const JoinOrCreateCompanyPage = () => {
       {currentCompany && (
         <div className="w-1/3 p-8 bg-white dark:bg-slate-800 rounded-lg shadow-lg">
           <h3 className="text-xl font-semibold mb-4">Your Current Company:</h3>
-          <p><strong>Name:</strong> {currentCompany.name}</p>
-          <p><strong>Description:</strong> {currentCompany.description}</p>
-          <p><strong>Location:</strong> {currentCompany.location}</p>
-          <p><strong>Website:</strong> <a href={currentCompany.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{currentCompany.website}</a></p>
+          <p>
+            <strong>Name:</strong> {currentCompany.name}
+          </p>
+          <p>
+            <strong>Description:</strong> {currentCompany.description}
+          </p>
+          <p>
+            <strong>Location:</strong> {currentCompany.location}
+          </p>
+          <p>
+            <strong>Website:</strong>{" "}
+            <a
+              href={currentCompany.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:underline"
+            >
+              {currentCompany.website}
+            </a>
+          </p>
           {currentCompany.image && (
             <div className="mt-4">
               <strong>Image:</strong>

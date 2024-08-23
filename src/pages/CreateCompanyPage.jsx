@@ -9,9 +9,10 @@ import { toast, Toaster } from "react-hot-toast";
 import CustomSelect from "@/components/ui/CustomSelect";
 
 const CreateCompanyPage = () => {
-  const { user, token, updateUser } = React.useContext(AuthContext);
-
+  const { user, token, updateUser } = useContext(AuthContext);
   const navigate = useNavigate();
+  
+  // Updated formData to include companyEmail
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -19,7 +20,9 @@ const CreateCompanyPage = () => {
     location: "",
     website: "",
     employeesNumber: "",
+    companyEmail: "", // New field for company email
   });
+  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -38,7 +41,8 @@ const CreateCompanyPage = () => {
       !formData.name ||
       !formData.description ||
       !formData.location ||
-      !formData.employeesNumber
+      !formData.employeesNumber ||
+      !formData.companyEmail // Ensure company email is also validated
     ) {
       setError("Please fill in all required fields.");
       return false;
@@ -62,6 +66,7 @@ const CreateCompanyPage = () => {
     formDataToSend.append("location", formData.location);
     formDataToSend.append("website", formData.website);
     formDataToSend.append("employeesNumber", formData.employeesNumber);
+    formDataToSend.append("companyEmail", formData.companyEmail); // Send company email
 
     try {
       const response = await axios.post(
@@ -108,8 +113,10 @@ const CreateCompanyPage = () => {
           <strong>Website:</strong> {formData.website || "Not provided"}
         </p>
         <p>
-          <strong>Employees:</strong>
-          {formData.employeesNumber || "Not provided"}
+          <strong>Employees:</strong> {formData.employeesNumber || "Not provided"}
+        </p>
+        <p>
+          <strong>Email:</strong> {formData.companyEmail || "Not provided"} {/* Display company email */}
         </p>
         {formData.image && (
           <div>
@@ -170,6 +177,17 @@ const CreateCompanyPage = () => {
               name="website"
               type="text"
               value={formData.website}
+              onChange={handleInputChange}
+              className="w-full border-2 focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="companyEmail">Company Email</Label>
+            <Input
+              id="companyEmail"
+              name="companyEmail"
+              type="email" // Specify email type
+              value={formData.companyEmail}
               onChange={handleInputChange}
               className="w-full border-2 focus:ring-2 focus:ring-blue-500"
             />

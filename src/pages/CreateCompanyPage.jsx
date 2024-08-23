@@ -12,7 +12,6 @@ const CreateCompanyPage = () => {
   const { user, token, updateUser } = useContext(AuthContext);
   const navigate = useNavigate();
   
-  // Updated formData to include companyEmail
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -20,7 +19,7 @@ const CreateCompanyPage = () => {
     location: "",
     website: "",
     employeesNumber: "",
-    companyEmail: "", // New field for company email
+    companyEmail: "",
   });
   
   const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +41,7 @@ const CreateCompanyPage = () => {
       !formData.description ||
       !formData.location ||
       !formData.employeesNumber ||
-      !formData.companyEmail // Ensure company email is also validated
+      !formData.companyEmail
     ) {
       setError("Please fill in all required fields.");
       return false;
@@ -66,7 +65,7 @@ const CreateCompanyPage = () => {
     formDataToSend.append("location", formData.location);
     formDataToSend.append("website", formData.website);
     formDataToSend.append("employeesNumber", formData.employeesNumber);
-    formDataToSend.append("companyEmail", formData.companyEmail); // Send company email
+    formDataToSend.append("companyEmail", formData.companyEmail);
 
     try {
       const response = await axios.post(
@@ -116,7 +115,7 @@ const CreateCompanyPage = () => {
           <strong>Employees:</strong> {formData.employeesNumber || "Not provided"}
         </p>
         <p>
-          <strong>Email:</strong> {formData.companyEmail || "Not provided"} {/* Display company email */}
+          <strong>Email:</strong> {formData.companyEmail || "Not provided"}
         </p>
         {formData.image && (
           <div>

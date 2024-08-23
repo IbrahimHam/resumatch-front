@@ -1,0 +1,26 @@
+{
+    "rewrites": [
+      {
+        "source": "/(.*)",
+        "destination": "/index.html"
+      }
+    ],
+    "routes": [
+      { "src": "/", "dest": "/" },
+      { "src": "/login", "dest": "/" },
+      { "src": "/register", "dest": "/" },
+      { "src": "/create-resume/.*", "dest": "/" },
+      { "src": "/create-job", "dest": "/" },
+      { "src": "/company/create", "dest": "/" },
+      { "src": "/settings", "dest": "/" },
+      { "src": "/jobs", "dest": "/" },
+      { "src": "/company/connect", "dest": "/" },
+      { "src": "/company/.*", "dest": "/" },
+      { "src": "/resume", "dest": "/" },
+      { "src": "/companies", "dest": "/" },
+      { "src": "/apply/.*", "dest": "/" },
+      { "src": "/unauthorized", "dest": "/" },
+      { "src": "/.*", "status": 404, "dest": "/404" }
+    ]
+  }
+  

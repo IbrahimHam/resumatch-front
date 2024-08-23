@@ -7,10 +7,10 @@ import TemplateThree from "./templates/TemplateThree";
 import TemplateFour from "./templates/TemplateFour";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "@/context/AuthContext";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import Modal from "./templates/Modal";
 import { Expand } from "lucide-react";
+import { pdf } from "@react-pdf/renderer";
+import PDFTemplateFour from "./templates/PDFTemplateFour";
 
 const CreateResume = () => {
   const { token, user } = React.useContext(AuthContext);
@@ -40,23 +40,14 @@ const CreateResume = () => {
     setIsModalOpen(!isModalOpen);
   };
 
-  const downloadPDF = () => {
-    const input = document.getElementById("resume");
-
-    html2canvas(input, {
-      scale: 2,
-      backgroundColor: null,
-    }).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save("resume.pdf");
-    });
+  const handleDownload = async () => {
+    const blob = await pdf(<PDFTemplateFour data={resumeData} />).toBlob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "resume.pdf";
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   useEffect(() => {
@@ -208,7 +199,7 @@ const CreateResume = () => {
             </button>
 
             <button
-              onClick={downloadPDF}
+              onClick={handleDownload}
               className="bg-green-500 text-white px-4 py-2 rounded-md ml-4"
             >
               Download

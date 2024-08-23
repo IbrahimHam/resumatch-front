@@ -1,15 +1,15 @@
 {
     "redirects": [
-      { "source": "/login", "destination": "/", "permanent": false },
-      { "source": "/register", "destination": "/", "permanent": false },
-      { "source": "/create-resume/(.*)", "destination": "/", "permanent": false },
-      { "source": "/create-job", "destination": "/", "permanent": false },
-      { "source": "/company/create", "destination": "/", "permanent": false },
-      { "source": "/settings", "destination": "/", "permanent": false },
-      { "source": "/jobs", "destination": "/", "permanent": false },
-      { "source": "/company/connect", "destination": "/", "permanent": false },
-      { "source": "/resume", "destination": "/", "permanent": false },
-      { "source": "/companies", "destination": "/", "permanent": false },
-      { "source": "/apply/(.*)", "destination": "/", "permanent": false }
+      { "source": "/login", "destination": "/login", "permanent": false },
+      { "source": "/register", "destination": "/register", "permanent": false },
+      { "source": "/create-resume/(.*)", "destination": "/create-resume/(.*)", "permanent": false },
+      { "source": "/create-job", "destination": "/create-job", "permanent": false },
+      { "source": "/company/create", "destination": "/company/create", "permanent": false },
+      { "source": "/settings", "destination": "/settings", "permanent": false },
+      { "source": "/jobs", "destination": "/jobs", "permanent": false },
+      { "source": "/company/connect", "destination": "/company/connect", "permanent": false },
+      { "source": "/resume", "destination": "/resume", "permanent": false },
+      { "source": "/companies", "destination": "/companies", "permanent": false },
+      { "source": "/apply/(.*)", "destination": "/apply/(.*)", "permanent": false }
     ]
   }

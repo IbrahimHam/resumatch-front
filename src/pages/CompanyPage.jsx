@@ -30,7 +30,7 @@ const CompanyPage = () => {
 
   return (
     <>
-      <main className="container mx-auto px-4 py-8 mt-12">
+      <main className="container mx-auto px-4 py-5 mt-8">
         <Alert className="w-full max-w-3xl mx-auto dark:border-gray-500/50 border-gray-500/20 shadow-md mt-10 mb-10">
           {company && company != null ? (
             <>

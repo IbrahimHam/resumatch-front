@@ -27,7 +27,6 @@ const CreateJobPage = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    
     const fetchCompanyInfo = async () => {
       if (!user.company_id) {
         navigate("/company/connect");
@@ -53,7 +52,6 @@ const CreateJobPage = () => {
       fetchCompanyInfo();
     }
   }, [user, token, navigate]);
-
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

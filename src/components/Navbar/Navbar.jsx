@@ -32,7 +32,7 @@ const Navbar = () => {
     isLoggedIn && user.role === "user"
       ? [
           { title: "Resume", path: "/resume", icon: FileText },
-          { title: "Cover Letter", path: "/cover-letter", icon: Mails },
+          { title: "Companies", path: "/companies", icon: Building2 },
         ]
       : [];
 
@@ -41,7 +41,6 @@ const Navbar = () => {
     { title: "Jobs", path: "/jobs", icon: BriefcaseBusiness },
     ...recruiterNavItems,
     ...userNavItems,
-    { title: "FAQ", path: "#faq", icon: MessageCircleQuestion },
   ];
 
   const isActiveNavItem = (path) => {

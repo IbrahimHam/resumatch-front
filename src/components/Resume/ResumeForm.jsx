@@ -99,7 +99,7 @@ const ResumeForm = ({
         const response = await axios.put(
           `${import.meta.env.VITE_API_URL}/user/update-resume-data`,
           {
-             data: formData,
+            data: formData,
           },
           {
             headers: { Authorization: `Bearer ${token}` },

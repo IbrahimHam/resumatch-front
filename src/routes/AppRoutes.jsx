@@ -1,13 +1,20 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthContext } from "@/context/AuthContext";
 import { routes } from "./routesConfig.jsx";
+import Loading from "@/components/Loading";
 
-const ProtectedRoute = ({ element, privateRoute, allowedRoles }) => {
+const ProtectedRoute = ({ element, privateRoute, allowedRoles, title }) => {
   const { isLoggedIn, user, loading } = useContext(AuthContext);
 
+  useEffect(() => {
+    if (title) {
+      document.title = title;
+    }
+  }, [title]);
+
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (privateRoute) {
@@ -25,19 +32,22 @@ const ProtectedRoute = ({ element, privateRoute, allowedRoles }) => {
 
 const AppRoutes = () => (
   <Routes>
-    {routes.map(({ path, element, private: privateRoute, allowedRoles }) => (
-      <Route
-        key={path}
-        path={path}
-        element={
-          <ProtectedRoute
-            element={element}
-            privateRoute={privateRoute}
-            allowedRoles={allowedRoles}
-          />
-        }
-      />
-    ))}
+    {routes.map(
+      ({ path, element, private: privateRoute, allowedRoles, title }) => (
+        <Route
+          key={path}
+          path={path}
+          element={
+            <ProtectedRoute
+              element={element}
+              privateRoute={privateRoute}
+              allowedRoles={allowedRoles}
+              title={title}
+            />
+          }
+        />
+      )
+    )}
   </Routes>
 );
 

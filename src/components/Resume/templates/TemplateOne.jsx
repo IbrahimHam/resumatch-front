@@ -1,68 +1,82 @@
 const TemplateOne = ({ data }) => {
   return (
-    <div className="p-0 bg-gray-50 rounded-md shadow-md">
-      <div className="bg-gray-800 text-white p-4">
-        <h1 className="text-2xl font-bold">{data.name || "Your Name"}</h1>
-        <p>{data.contactInfo.email || "Email"}</p>
-        <p>{data.contactInfo.phone || "Phone"}</p>
-        <p>{data.contactInfo.address || "Address"}</p>
-        <p>{data.birthDate || "Birth Date"}</p>
-        <p>{data.summary || "Summary"}</p>
-      </div>
+    <div className="max-w-5xl mx-auto bg-white shadow-2xl rounded-lg overflow-hidden">
+      <header className="bg-gray-800 text-white p-8">
+        <h1 className="text-4xl font-bold mb-2">{data.name}</h1>
+        <p className="text-xl">{data.title}</p>
+        <div className="mt-4 flex justify-between">
+          <p>{data.contactInfo.email}</p>
+          <p>{data.contactInfo.phone}</p>
+          <p>{data.contactInfo.address}</p>
+        </div>
+      </header>
 
-      <div className="mt-6">
-        <h2 className="text-lg font-semibold">Experience</h2>
-        <ul>
-          {data.experience &&
-            data.experience.map((exp, index) => (
-              <li key={index} className="flex justify-between">
-                <span>{exp.jobTitle || "Your Title"}</span>
-                <span>{exp.company || "Company"}</span>
-                <span>{exp.startDate || "Start Date"}</span>
-                <span>{exp.endDate || "End Date"}</span>
-                <span>{exp.description || "Description about your job"}</span>
-              </li>
-            ))}
-        </ul>
-      </div>
+      <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:col-span-2 space-y-6">
+          <section className="bg-gray-50 p-6 rounded-lg shadow">
+            <h2 className="text-2xl font-bold text-gray-700 mb-4">Profile</h2>
+            <p className="text-gray-700">{data.summary}</p>
+          </section>
 
-      <div className="mt-6">
-        <h2 className="text-lg font-semibold">Education</h2>
-        <ul>
-          {data.education &&
-            data.education.map((edc, index) => (
-              <li key={index} className="flex justify-between">
-                <span>{edc.institution || "Language"}</span>
-                <span>{edc.degree || "Degree"}</span>
-                <span>{edc.startDate || "Start Date"}</span>
-                <span>{edc.endDate || "End Date"}</span>
-              </li>
+          <section className="bg-gray-50 p-6 rounded-lg shadow">
+            <h2 className="text-2xl font-bold text-gray-700 mb-4">
+              Employment
+            </h2>
+            {data.experience.map((exp, index) => (
+              <div key={index} className="mb-4">
+                <h3 className="text-xl font-semibold text-gray-700">
+                  {exp.jobTitle}
+                </h3>
+                <p className="text-lg text-gray-600">{exp.company}</p>
+                <p className="text-sm text-gray-600">
+                  {exp.startDate} - {exp.endDate}
+                </p>
+                <p className="text-gray-700 mt-2 break-words">
+                  {exp.description}
+                </p>
+              </div>
             ))}
-        </ul>
-      </div>
+          </section>
 
-      <div className="mt-6">
-        <h2 className="text-lg font-semibold">Languages</h2>
-        <ul>
-          {data.languages &&
-            data.languages.map((language, index) => (
-              <li key={index} className="flex justify-between">
-                <span>{language}</span>
-              </li>
+          <section className="bg-gray-50 p-6 rounded-lg shadow">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Education</h2>
+            {data.education.map((edu, index) => (
+              <div key={index} className="mb-4">
+                <h3 className="text-xl font-semibold text-gray-700">
+                  {edu.institution}
+                </h3>
+                <p className="text-gray-700">{edu.degree}</p>
+                <p className="text-sm text-gray-600">
+                  {edu.startDate} - {edu.endDate}
+                </p>
+              </div>
             ))}
-        </ul>
-      </div>
+          </section>
+        </div>
 
-      <div className="mt-6">
-        <h2 className="text-lg font-semibold">Skills</h2>
-        <ul>
-          {data.skills &&
-            data.skills.map((skill, index) => (
-              <li key={index} className="flex justify-between">
-                <span>{skill}</span>
-              </li>
-            ))}
-        </ul>
+        <div className="space-y-6">
+          <section className="bg-gray-50 p-6 rounded-lg shadow">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Languages</h2>
+            <ul className="list-disc list-inside">
+              {data.languages.map((lang, index) => (
+                <li key={index} className="text-gray-700">
+                  {lang}
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="bg-gray-50 p-6 rounded-lg shadow">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Skills</h2>
+            <ul className="list-disc list-inside">
+              {data.skills.map((skill, index) => (
+                <li key={index} className="text-gray-700">
+                  {skill}
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
       </div>
     </div>
   );

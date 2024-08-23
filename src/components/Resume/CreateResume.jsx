@@ -5,12 +5,18 @@ import TemplateOne from "./templates/TemplateOne";
 import TemplateTwo from "./templates/TemplateTwo";
 import TemplateThree from "./templates/TemplateThree";
 import TemplateFour from "./templates/TemplateFour";
+import TemplateFive from "./templates/TemplateFive";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "@/context/AuthContext";
 import Modal from "./templates/Modal";
 import { Expand } from "lucide-react";
 import { pdf } from "@react-pdf/renderer";
+import PDFTemplateOne from "./templates/PDFTemplateOne";
 import PDFTemplateFour from "./templates/PDFTemplateFour";
+import PDFTemplateThree from "./templates/PDFTemplateThree";
+import PDFTemplateTwo from "./templates/PDFTemplateTwo";
+import PDFTemplateFive from "./templates/PDFTemplateFive";
+import Loading from "@/components/Loading";
 
 const CreateResume = () => {
   const { token, user } = React.useContext(AuthContext);
@@ -40,8 +46,25 @@ const CreateResume = () => {
     setIsModalOpen(!isModalOpen);
   };
 
+  const renderPDF = () => {
+    switch (id) {
+      case "1":
+        return <PDFTemplateOne data={resumeData} />;
+      case "2":
+        return <PDFTemplateTwo data={resumeData} />;
+      case "3":
+        return <PDFTemplateThree data={resumeData} />;
+      case "4":
+        return <PDFTemplateFour data={resumeData} />;
+      case "5":
+        return <PDFTemplateFive data={resumeData} />;
+      default:
+        return <PDFTemplateOne data={resumeData} />;
+    }
+  };
+
   const handleDownload = async () => {
-    const blob = await pdf(<PDFTemplateFour data={resumeData} />).toBlob();
+    const blob = await pdf(renderPDF()).toBlob();
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -118,6 +141,8 @@ const CreateResume = () => {
         return <TemplateThree data={resumeData} />;
       case "4":
         return <TemplateFour data={resumeData} />;
+      case "5":
+        return <TemplateFive data={resumeData} />;
       default:
         return <TemplateOne data={resumeData} />;
     }
@@ -165,14 +190,13 @@ const CreateResume = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   return (
     <>
       <div className="flex flex-col md:flex-row min-h-screen">
         <div className="md:w-2/4 overflow-y-auto p-4">
-          {resumeId}
           <ResumeForm
             onUpdate={handleFormUpdate}
             initialData={resumeData}

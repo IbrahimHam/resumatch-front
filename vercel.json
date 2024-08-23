@@ -1,26 +1,15 @@
 {
-    "rewrites": [
-      {
-        "source": "/(.*)",
-        "destination": "/index.html"
-      }
-    ],
-    "routes": [
-      { "src": "/", "dest": "/" },
-      { "src": "/login", "dest": "/" },
-      { "src": "/register", "dest": "/" },
-      { "src": "/create-resume/.*", "dest": "/" },
-      { "src": "/create-job", "dest": "/" },
-      { "src": "/company/create", "dest": "/" },
-      { "src": "/settings", "dest": "/" },
-      { "src": "/jobs", "dest": "/" },
-      { "src": "/company/connect", "dest": "/" },
-      { "src": "/company/.*", "dest": "/" },
-      { "src": "/resume", "dest": "/" },
-      { "src": "/companies", "dest": "/" },
-      { "src": "/apply/.*", "dest": "/" },
-      { "src": "/unauthorized", "dest": "/" },
-      { "src": "/.*", "status": 404, "dest": "/404" }
+    "redirects": [
+      { "source": "/login", "destination": "/", "permanent": false },
+      { "source": "/register", "destination": "/", "permanent": false },
+      { "source": "/create-resume/(.*)", "destination": "/", "permanent": false },
+      { "source": "/create-job", "destination": "/", "permanent": false },
+      { "source": "/company/create", "destination": "/", "permanent": false },
+      { "source": "/settings", "destination": "/", "permanent": false },
+      { "source": "/jobs", "destination": "/", "permanent": false },
+      { "source": "/company/connect", "destination": "/", "permanent": false },
+      { "source": "/resume", "destination": "/", "permanent": false },
+      { "source": "/companies", "destination": "/", "permanent": false },
+      { "source": "/apply/(.*)", "destination": "/", "permanent": false }
     ]
   }
-  

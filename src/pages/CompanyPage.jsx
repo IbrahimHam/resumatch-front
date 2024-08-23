@@ -30,7 +30,7 @@ const CompanyPage = () => {
 
   return (
     <>
-      <main className="container mx-auto px-4 py-5 mt-8">
+      <main className="container mx-auto px-4 py-8 mt-12">
         <Alert className="w-full max-w-3xl mx-auto dark:border-gray-500/50 border-gray-500/20 shadow-md mt-10 mb-10">
           {company && company != null ? (
             <>
@@ -38,7 +38,7 @@ const CompanyPage = () => {
               <AlertDescription>
                 <div className="flex flex-col md:flex-row items-center gap-6 mt-5">
                   <img
-                    src={`http://localhost:3000${company.image}`}
+                    src={`${import.meta.env.VITE_BASE_URL}${company.image}`}
                     alt="Company Logo"
                     className="rounded-full w-24 h-24 object-cover border-4 border-primary"
                   />

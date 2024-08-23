@@ -156,7 +156,9 @@ const CompaniesPage = () => {
                 {/* Additional content here */}
                 <div className="flex flex-col md:flex-row items-center gap-6 mt-5">
                   <img
-                    src={`http://localhost:3000${selectedCompany.image}`}
+                    src={`${import.meta.env.VITE_BASE_URL}${
+                      selectedCompany.image
+                    }`}
                     alt="Company Logo"
                     className="rounded-full w-24 h-24 object-cover border-4 border-primary"
                   />

@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "@/context/AuthContext";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast, Toaster } from "react-hot-toast";
 
 const ApplyJobPage = () => {
   const { user, token } = useContext(AuthContext);
@@ -9,6 +10,7 @@ const ApplyJobPage = () => {
   const [subject, setSubject] = useState("");
   const [emailBody, setEmailBody] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [latestPdfPath, setLatestPdfPath] = useState(null);
   const navigate = useNavigate();
@@ -84,18 +86,20 @@ const ApplyJobPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     if (!latestPdfPath) {
       setError("Failed to retrieve the latest resume PDF.");
+      setIsSubmitting(false);
       return;
     }
 
     try {
-      const sendResponse = await axios.post(
+      await axios.post(
         `${import.meta.env.VITE_API_URL}/user/send-application`,
         {
           coverLetter: emailBody,
-          companyEmail: job.companyId.email,
+          companyEmail: job.companyId.companyEmail,
           resumePdfPath: latestPdfPath,
         },
         {
@@ -106,11 +110,16 @@ const ApplyJobPage = () => {
         }
       );
 
-      console.log("Application sent successfully:", sendResponse.data);
-      // navigate('/jobs'); // Navigate after sending
+      toast.success("Application sent successfully!");
+
+      setTimeout(() => {
+        navigate("/jobs");
+      }, 1500);
     } catch (error) {
       console.error(error);
       setError("Failed to send the application");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -118,6 +127,7 @@ const ApplyJobPage = () => {
 
   return (
     <div className="flex min-h-screen bg-slate-100 dark:bg-slate-900 pt-5 px-4">
+      <Toaster position="top-center" />
       {/* Left Side */}
       <div className="w-1/2 bg-white dark:bg-slate-800 p-8 shadow-lg rounded-lg mr-2 space-y-9 flex flex-col justify-between">
         <div>
@@ -155,17 +165,22 @@ const ApplyJobPage = () => {
                 type="button"
                 onClick={generateCoverLetter}
                 className={`mt-2 px-4 py-2 rounded-full ${
-                  isGenerating ? "bg-gray-300" : "bg-blue-500 text-white"
+                  isGenerating
+                    ? "bg-gray-300"
+                    : "bg-blue-500 text-white"
                 } ${isGenerating && "cursor-not-allowed"}`}
-                disabled={isGenerating}
+                disabled={isGenerating || isSubmitting}
               >
                 {isGenerating ? "Generating..." : "Generate Cover Letter"}
               </button>
               <button
                 type="submit"
-                className="mt-2 px-4 py-2 rounded-full bg-green-500 text-white"
+                className={`mt-2 px-4 py-2 rounded-full bg-green-500 text-white ${
+                  isSubmitting && "cursor-not-allowed"
+                }`}
+                disabled={isSubmitting}
               >
-                Send Application
+                {isSubmitting ? "Sending..." : "Send Application"}
               </button>
             </div>
           </form>

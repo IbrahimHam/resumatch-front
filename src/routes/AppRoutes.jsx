@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthContext } from "@/context/AuthContext";
-import { routes } from "./routesConfig.jsx";
+import { routes } from "./RoutesConfig.jsx";
 import Loading from "@/components/Loading";
 
 const ProtectedRoute = ({ element, privateRoute, allowedRoles, title }) => {

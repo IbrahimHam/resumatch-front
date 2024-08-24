@@ -12,7 +12,7 @@ import { Tooltip } from "@/components/ui/Tooltip";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "@/components/ui/ConfirmationDialog";
 import Loading from "@/components/Loading";
-import { Badge } from "@/components/ui/Badge";
+import { Badge } from "@/components/ui/badge";
 import { Check } from "lucide-react";
 
 const JobListPage = () => {

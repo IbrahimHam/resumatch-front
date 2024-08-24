@@ -1,5 +1,7 @@
+import React, { useRef } from "react";
 import { cn } from "@/lib/utils";
 import Marquee from "@/components/magicui/marquee";
+import { motion, useInView } from "framer-motion";
 
 const reviews = [
   {
@@ -69,10 +71,18 @@ const ReviewCard = ({ img, name, username, body }) => {
 };
 
 const ReviewCards = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.3 });
+
   return (
-    <section className="mb-16">
-      <div className="grid md:grid-cols-2">
-        <div className="flex flex-col justify-center items-center">
+    <section ref={ref} className="mb-16">
+      <div className="grid md:grid-cols-2 gap-8">
+        <motion.div
+          className="flex flex-col justify-center items-center"
+          initial={{ opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
           <h2 className="text-5xl uppercase font-bold mb-8 text-slate-900 dark:text-white text-center">
             What Our <br />
             Customers Say
@@ -81,9 +91,16 @@ const ReviewCards = () => {
             We're loved by our users worldwide. Here's what some of them have to
             say.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="relative flex h-[500px] w-full flex-row items-center justify-center overflow-hidden rounded-lg">
+        <motion.div
+          className="relative flex h-[500px] w-full flex-row items-center justify-center overflow-hidden rounded-lg"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={
+            isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }
+          }
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
           <Marquee pauseOnHover vertical className="[--duration:20s]">
             {firstRow.map((review) => (
               <ReviewCard key={review.username} {...review} />
@@ -101,7 +118,7 @@ const ReviewCards = () => {
           </Marquee>
           <div className="pointer-events-none absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white dark:from-slate-900"></div>
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-white dark:from-slate-900"></div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

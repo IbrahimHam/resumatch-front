@@ -96,7 +96,7 @@ const ApplyJobPage = () => {
 
     try {
       await axios.post(
-        `${import.meta.env.VITE_API_URL}/user/send-application`,
+        `${import.meta.env.VITE_API_URL}/user/send-application/${jobId}`,
         {
           coverLetter: emailBody,
           companyEmail: job.companyId.companyEmail,
@@ -165,9 +165,7 @@ const ApplyJobPage = () => {
                 type="button"
                 onClick={generateCoverLetter}
                 className={`mt-2 px-4 py-2 rounded-full ${
-                  isGenerating
-                    ? "bg-gray-300"
-                    : "bg-blue-500 text-white"
+                  isGenerating ? "bg-gray-300" : "bg-blue-500 text-white"
                 } ${isGenerating && "cursor-not-allowed"}`}
                 disabled={isGenerating || isSubmitting}
               >

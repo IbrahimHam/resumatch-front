@@ -12,6 +12,8 @@ import { Tooltip } from "@/components/ui/Tooltip";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "@/components/ui/ConfirmationDialog";
 import Loading from "@/components/Loading";
+import { Badge } from "@/components/ui/Badge";
+import { Check } from "lucide-react";
 
 const JobListPage = () => {
   const { user, token } = useContext(AuthContext);
@@ -28,6 +30,7 @@ const JobListPage = () => {
   const [showMyJobs, setShowMyJobs] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [jobData, setJobData] = useState({}); // Separate state for job data
+  const [appliedJobs, setAppliedJobs] = useState([]);
   const jobsPerPage = 3;
   const navigate = useNavigate();
 
@@ -52,6 +55,23 @@ const JobListPage = () => {
       }
     };
 
+    const fetchAppliedJobs = async () => {
+      if (user?.role !== "user") return;
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/user/me`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setAppliedJobs(response.data.data.user.appliedJobs);
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to load applied jobs.");
+      }
+    };
+    fetchAppliedJobs();
     fetchJobs();
   }, [token]);
 
@@ -327,7 +347,19 @@ const JobListPage = () => {
                   onClick={() => setSelectedJob(job)}
                 >
                   <div>
-                    <h3 className="text-xl font-semibold">{job.title}</h3>
+                    <h3 className="text-xl font-semibold">
+                      {job.title}{" "}
+                      {appliedJobs.includes(job._id) && (
+                        <Tooltip
+                          content="You have already applied for this job."
+                          className="bg-blue-600 text-white text-sm p-2 rounded-lg"
+                        >
+                          <Badge className="bg-blue-600 text-white py-0 px-1">
+                            <Check size={14} />
+                          </Badge>
+                        </Tooltip>
+                      )}
+                    </h3>
                     <p className="text-gray-600 dark:text-gray-400 mb-2">
                       {job.description}
                     </p>
@@ -397,7 +429,8 @@ const JobListPage = () => {
             ))}
           </div>
           <div className="mt-4">
-            {user?.role === "user" ? (
+            {user?.role === "user" &&
+            !appliedJobs.includes(selectedJob?._id) ? (
               <div className="justify-end">
                 <button
                   onClick={() => handleApply(selectedJob?._id)}
@@ -406,6 +439,18 @@ const JobListPage = () => {
                   }
                 >
                   Apply
+                </button>
+              </div>
+            ) : user?.role === "user" &&
+              appliedJobs.includes(selectedJob?._id) ? (
+              <div className="justify-end">
+                <button
+                  disabled
+                  className={
+                    "px-4 py-2 rounded-full bg-blue-300 text-gray-50 cursor-not-allowed flex items-center space-x-2"
+                  }
+                >
+                  <Check size={16} /> Applied
                 </button>
               </div>
             ) : user?.role === "recruiter" &&

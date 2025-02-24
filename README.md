@@ -58,8 +58,6 @@ This frontend application communicates with our dedicated backend API (available
 
 ## Screenshots
 
-*Below are placeholder images. Replace the image paths with actual screenshots of your application.*
-
 ### Home Page
 
 ![Home Page](./public/home.png)
